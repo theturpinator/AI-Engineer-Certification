@@ -69,6 +69,8 @@ Why is cosine similarity useful for dense vector retrieval?
 
 ##### ✅ Answer:
 
+Cosine similary is useful because, as opposed to keyword search, we do not require an exact match. This means we can find out if 2 items are similar to one another, but not identical. We can identify peices of information that are "close" to the user query to identify data that may be contextually relevant and helpful in answering their query.
+
 ---
 
 ## 🏗️ Activity #2: Build the Vector RAG Pipeline
@@ -87,18 +89,27 @@ Run the notebook sections that:
 Why is metadata important for a RAG application?
 
 ##### ✅ Answer:
+Auditability - this will allow us to identify the document source of the chunk to cite our sources
+
+Freshness - if maintaining a timestamp of when the document was loaded, we can know which documents are more recent.
+
+Filtering - if we tag metadata surrounding the document, we can narrow the search to those documents of a specific category, for example (e.g. if have an "animal" metadata attribute, we can filter for "cat" specifically)
 
 #### ❓Question #3
 
 What tradeoff do we make when choosing chunk size and chunk overlap?
 
 ##### ✅ Answer:
+Too small of a chunk would result in not enough context to capture any significant meaning or failure to establish an over-arching concept for a text chunk. Too large of a chunk would mean there are too many concepts discussed in a single vector, losing the ability to precisely capture what is relevant to the user query. 
+
+Too little overlap between chunks could lead to splitting one single talking point in a document into multiple chunks - with overlap we reduce the risk of missing pertinent context in each chunk. However, the tradeoff is more redundancy between chunks. A large amount of overlap could make for less useful results (e.g., a high number of relevant chunks for any given query) and wasted space in the database, since we'll need more vectors to represent the entire document.
 
 #### ❓Question #4
 
 What does a similarity score help you understand, and what does it not prove by itself?
 
 ##### ✅ Answer:
+The similarity score shows the cosine similarity between the embedding vector retrieved from Qdrant and the retrieval query. This is essentially the semantic simlarity between the two. However, this does not tell us how relevant the document is to the query, or how useful the provided information is. For example, if the vector DB contained the identical literal string of the user's prompt, I would expect a similarity score of 1, but this doesn't provide any useful additional context to answer the query.
 
 ---
 
@@ -114,7 +125,7 @@ Run the notebook's vibe check queries and inspect both:
 For the vibe check queries, did the retrieved context seem relevant before generation? Why or why not?
 
 ##### ✅ Answer:
-
+It did feel relevant. For the preventative care question, all of the feedback was directly related to the query. Likewise for the questions regarding symptoms warranting veterinarian care and feeding directions. However, I think the answer for feeding instructions was a little too verbose and had information for obese cats, which may not be needed since the user mentioned the cat was healthy. For the question about filing taxes, the model responded that it could not help with that, as expected.
 ---
 
 ## 🏗️ Activity #4: Tune Retrieval
@@ -130,14 +141,13 @@ Document what changed and whether retrieval improved.
 
 ##### Settings Changed:
 
--
+- Setting changed: chunk_size
+- Before: 1000
+- After: 2000
 
 ##### Results:
 
-1.
-2.
-3.
-
+- Did retrieval improve? Why or why not? Yes, retrieval improved. The similarity scores for the top 4 chunks increased improved slightly. Also, while subjective, the quality of the responses seemed to improve - they are more coherent an have complete ideas instead of more fragmented suggestions.
 ---
 
 ## Optional Deep Dive: RAG From Scratch
