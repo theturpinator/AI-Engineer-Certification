@@ -155,7 +155,9 @@ Why is OAuth important for MCP servers, and what security considerations should 
 
 #### Answer
 
-_(insert your answer here)_
+OAuth is important for MCP servers because unauthenticated traffic can be dangerous. Publicly exposing your MCP server without authentication could result in attackers using your MCP for malicious purposes or trying to identify security vulnerabilities to infiltrate your system. In addition, they could perform distributed denial of service attacks to prevent your users from accessing your MCP server (or resulting in a huge increase in costs due to usage).  OAuth can help to authenticate the intended audience and perform granular access control to the available tools (authorization). OAuth additionally uses temporary tokens per session, to mitigate the possiblity of an attack due to an exposed token.
+
+When exposing tools to AI clients, it is important to firstly only allow access to trusted clients. In addition, you should thoroughly test the tools to prevent prompt injection attacks, or unintended data exposure.
 
 ### Question #2
 
@@ -163,7 +165,9 @@ What is Streamable HTTP transport in MCP, and why might you expose a server publ
 
 #### Answer
 
-_(insert your answer here)_
+Streamable HTTP is how a publicly hosted MCP server communicates with its clients. It starts as a normal HTTP connection, where the client sends a POST request. The MCP server can choose to respond in regular JSON (maybe if the client just requests a list of tools or something simple), OR it can upgrade the connection to SSE (server-sent events). This makes sense when the MCP server is executing a task on a longer time horizon, so it can communicate progress to the client, or ask follow-up questions for necessary context.
+
+I would expose an MCP server publicly with OAuth instead of local stdio connection if I need to expose the tools to other users securely. stdio is fine if I'm connecting to agents all running on the same machine, but if I want to expose the toolset broadly, stdio wouldn't make sense - I would have to send the server code to all the users and have them run it on their local machines. Hosting the MCP server allows me to deploy the code once and centrally control access.
 
 ## Activity 1: Extend the MCP Server
 

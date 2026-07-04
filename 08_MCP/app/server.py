@@ -8,6 +8,7 @@ from mcp.server.auth.settings import (
 from mcp.server.fastmcp import FastMCP
 
 from .oauth import CatShopOAuthProvider
+from dotenv import load_dotenv; load_dotenv()
 
 ISSUER_URL = os.environ.get("ISSUER_URL", "http://localhost:8000")
 
