@@ -4,13 +4,20 @@
   "env": ".env",
   "python_version": "3.13",
   "graphs": {
-    "simple_agent": "app.graphs.simple_agent:graph"
+    "simple_agent": "app.graphs.simple_agent:graph",
+    "watch_curator": "app.graphs.watch_curator:graph",
+    "agent_with_helpfulness": "app.graphs.agent_with_helpfulness:graph"
   },
   "assistants": {
     "agent": {
       "graph_id": "simple_agent",
       "name": "Simple Agent",
       "description": "Agent with tools using conditional tool-calling."
+    },
+    "agent_with_helpfulness": {
+      "graph_id": "agent_with_helpfulness",
+      "name": "Agent with helpfulness",
+      "description": "Agent with tools using conditional tool-calling. Adds a post-response helpfulness check: after the agent answers, a judge model decides whether the response is helpful, and if not, the graph loops back for another attempt"
     }
   }
 }

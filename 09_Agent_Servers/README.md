@@ -428,7 +428,13 @@ Why does LangSmith deploy your agent as an API backend only, and why do you stil
 
 #### Answer
 
-_(insert your answer here)_
+LangSmith is setup to serve an agent graph via REST endpoints, not web pages. It doesn't have the plumbing to do so. You still need a separate frontend deployment like Vercel because you need an interface for users to interact with your agent.
+
+It is actually a best practice to separate your frontend from backend for multiple reasons:
+1. They likely have different usage patterns and compute requirements
+2. There may be multiple clients interfacing with the backend (i.e., not just the user-facing UI)
+3. API keys for the LLM only live in the backend, so there's virtually no possiblity of the keys getting leaked to users.
+4. We can deploy them independently (e.g., there's some cosmetic changes to the UI, so we can just deploy the UI and the agent can remain as-is)
 
 ### Question #2
 
@@ -436,11 +442,13 @@ Why should the LangSmith API key live in a Next.js API route (server-side) inste
 
 #### Answer
 
-_(insert your answer here)_
+For security reasons, we need to leave the API key server-side. If we leave this in the browser, it leaves the possibility of the key being exposed to the user in the browser console. Everything rendered in the browser is visible - doing this would be asking for our credentials to be stolen.
 
 ## Activity 1: Build a Helpfulness Loop in Production
 
 Build an `agent_with_helpfulness` graph that adds a post-response helpfulness check: after the agent answers, a judge model decides whether the response is helpful, and if not, the graph loops back for another attempt (with a safe loop limit). Register it in `langgraph.json`, deploy it, then compare LangSmith traces for queries that pass vs. fail the helpfulness check. Does the retry loop behave differently in Studio vs. production?
+
+Created! Discussed in the Loom. Yes, the retry loop behaves slightly differently in production. Everything seemed to function fine in Studio, but in the deployed website, the response from the LLM judge was coming back to the user in the UI. In addition, all of the responses unreviewed for helpfulness were coming back, too. This led to a poor user experience. I had to use the "config={"tags": ["nostream"]}" parameter on the LLM invocations to prevent them from showing up. In addition, I had to perform  careful handling of the message stream to ensure intermediate answers were not shown, and only the final answer was returned. The downside of this approach is that, because we need to validate the final response, we can't stream the response back to the user. This leads to a long "thinking" time (extended time to first token). This is the tradeoff with having the response judging step.
 
 ## Advanced Activity: Auth and Custom Routes
 

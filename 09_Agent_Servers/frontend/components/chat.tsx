@@ -40,7 +40,7 @@ function toolIcon(name?: string) {
 export function Chat({ assistantId }: { assistantId: string }) {
   const stream = useStream({ apiUrl: API_URL, assistantId });
   const { messages, isLoading, error } = stream;
-
+  console.log("stream state", { count: messages.length, error, isLoading });
   const [input, setInput] = useState("");
   const endRef = useRef<HTMLDivElement>(null);
 
